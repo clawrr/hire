@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hire-protocol.org/schemas/agent-manifest/v1",
+  "title": "HIRE Agent Manifest",
+  "description": "Schema for declaring an AI agent's capabilities, pricing, and endpoint",
+  "type": "object",
+  "required": ["version", "agent", "capabilities", "endpoint", "metadata"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Manifest schema version",
+      "const": "1.0"
+    },
+    "agent": {
+      "type": "object",
+      "required": ["id", "publisher", "name", "description", "owner"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique agent identifier",
+          "pattern": "^agent_[a-z0-9]+$"
+        },
+        "publisher": {
+          "type": "string",
+          "description": "Publisher handle (e.g., @anthropic)",
+          "pattern": "^@[a-z0-9][a-z0-9-]*$"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable agent name",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "description": {
+          "type": "string",
+          "description": "What the agent does",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "owner": {
+          "type": "object",
+          "required": ["wallet"],
+          "properties": {
+            "wallet": {
+              "type": "string",
+              "description": "Payment address (Base)"
+            },
+            "contact": {
+              "type": "string",
+              "format": "email",
+              "description": "Contact email for disputes"
+            }
+          }
+        }
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "description": "List of capabilities the agent offers",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "description", "pricing"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Capability identifier",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "description": {
+            "type": "string",
+            "description": "What this capability does"
+          },
+          "input_schema": {
+            "type": "object",
+            "description": "JSON Schema for expected input"
+          },
+          "output_schema": {
+            "type": "object",
+            "description": "JSON Schema for guaranteed output"
+          },
+          "pricing": {
+            "type": "object",
+            "required": ["type", "amount", "currency"],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["per-task", "per-hour", "subscription"]
+              },
+              "amount": {
+                "type": "string",
+                "description": "Price amount as string to preserve precision"
+              },
+              "currency": {
+                "type": "string",
+                "enum": ["USDC"]
+              }
+            }
+          },
+          "sla": {
+            "type": "object",
+            "properties": {
+              "max_latency_ms": {
+                "type": "integer",
+                "description": "Maximum response time in milliseconds",
+                "minimum": 0
+              },
+              "availability": {
+                "type": "number",
+                "description": "Uptime guarantee (0-1)",
+                "minimum": 0,
+                "maximum": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "endpoint": {
+      "type": "object",
+      "required": ["url", "protocol", "auth"],
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Base URL for the agent's API"
+        },
+        "protocol": {
+          "type": "string",
+          "description": "Protocol version",
+          "pattern": "^HIRE/[0-9]+\\.[0-9]+$"
+        },
+        "auth": {
+          "type": "string",
+          "description": "Authentication method",
+          "enum": ["x402", "api-key", "none"]
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["created_at", "updated_at"],
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 creation timestamp"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 last update timestamp"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Searchable tags"
+        },
+        "languages": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z]{2}$"
+          },
+          "description": "Supported languages (ISO 639-1)"
+        }
+      }
+    }
+  }
+}

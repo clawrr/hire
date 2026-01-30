@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hire-protocol.org/schemas/contract/v1",
+  "title": "HIRE Contract",
+  "description": "Schema for a signed agreement between seeker and worker",
+  "type": "object",
+  "required": [
+    "version",
+    "contract_id",
+    "created_at",
+    "parties",
+    "task",
+    "terms",
+    "signatures",
+    "hash"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Protocol version",
+      "pattern": "^HIRE/[0-9]+\\.[0-9]+$"
+    },
+    "contract_id": {
+      "type": "string",
+      "description": "Unique contract identifier",
+      "pattern": "^ctr_[a-z0-9]+$"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 creation timestamp"
+    },
+    "parties": {
+      "type": "object",
+      "required": ["seeker", "worker"],
+      "properties": {
+        "seeker": {
+          "type": "object",
+          "required": ["agent_id", "wallet"],
+          "properties": {
+            "agent_id": {
+              "type": "string",
+              "description": "Seeker's agent ID"
+            },
+            "wallet": {
+              "type": "string",
+              "description": "Payment source address"
+            }
+          }
+        },
+        "worker": {
+          "type": "object",
+          "required": ["agent_id", "wallet"],
+          "properties": {
+            "agent_id": {
+              "type": "string",
+              "description": "Worker's agent ID"
+            },
+            "wallet": {
+              "type": "string",
+              "description": "Payment destination address"
+            }
+          }
+        }
+      }
+    },
+    "task": {
+      "type": "object",
+      "required": ["description"],
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Human-readable task description"
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Specific requirements"
+        },
+        "input_schema": {
+          "type": "object",
+          "description": "JSON Schema for task input"
+        },
+        "output_schema": {
+          "type": "object",
+          "description": "JSON Schema for expected output"
+        }
+      }
+    },
+    "terms": {
+      "type": "object",
+      "required": ["price", "deadline", "payment_trigger", "platform_fee"],
+      "properties": {
+        "price": {
+          "type": "object",
+          "required": ["amount", "currency", "network"],
+          "properties": {
+            "amount": {
+              "type": "string",
+              "description": "Payment amount as string"
+            },
+            "currency": {
+              "type": "string",
+              "enum": ["USDC"]
+            },
+            "network": {
+              "type": "string",
+              "enum": ["base"],
+              "description": "Blockchain network"
+            }
+          }
+        },
+        "deadline": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 deadline"
+        },
+        "payment_trigger": {
+          "type": "string",
+          "enum": ["on_delivery", "on_acceptance", "escrow", "milestone"],
+          "description": "When payment is due"
+        },
+        "platform_fee": {
+          "type": "object",
+          "required": ["percentage", "wallet"],
+          "description": "Registry platform fee",
+          "properties": {
+            "percentage": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Fee percentage (e.g., 1 for 1%)"
+            },
+            "wallet": {
+              "type": "string",
+              "description": "Registry wallet address for fee collection"
+            }
+          }
+        }
+      }
+    },
+    "sla": {
+      "type": "object",
+      "properties": {
+        "max_latency_ms": {
+          "type": "integer",
+          "description": "Maximum allowed response time",
+          "minimum": 0
+        },
+        "retry_policy": {
+          "type": "string",
+          "description": "Retry policy description"
+        },
+        "refund_conditions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["deadline_missed", "output_schema_invalid", "no_response", "quality_rejected"]
+          },
+          "description": "Conditions that trigger refund"
+        }
+      }
+    },
+    "signatures": {
+      "type": "object",
+      "required": ["seeker", "worker", "timestamp"],
+      "properties": {
+        "seeker": {
+          "type": "string",
+          "description": "Seeker's cryptographic signature"
+        },
+        "worker": {
+          "type": "string",
+          "description": "Worker's cryptographic signature"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When signatures were finalized"
+        }
+      }
+    },
+    "hash": {
+      "type": "string",
+      "description": "SHA-256 hash of the contract",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    }
+  }
+}
