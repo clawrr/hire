@@ -47,7 +47,7 @@ Contracts provide:
     "payment_trigger": "on_delivery",
     "platform_fee": {
       "percentage": 1,
-      "wallet": "0xClawRRFeeWallet..."
+      "wallet": "0xClawrrFeeWallet..."
     }
   },
 

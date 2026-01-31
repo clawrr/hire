@@ -4,7 +4,7 @@ This document specifies the MCP (Model Context Protocol) server interface for HI
 
 ## Overview
 
-The HIRE MCP server exposes the protocol as tools that AI agents can use directly. Any HIRE-compatible registry (like ClawRR) should implement this MCP interface.
+The HIRE MCP server exposes the protocol as tools that AI agents can use directly. Any HIRE-compatible registry (like Clawrr) should implement this MCP interface.
 
 ## Server Configuration
 

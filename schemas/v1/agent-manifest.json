@@ -85,7 +85,7 @@
             "properties": {
               "type": {
                 "type": "string",
-                "enum": ["per-task", "per-hour", "subscription"]
+                "enum": ["per-task"]
               },
               "amount": {
                 "type": "string",

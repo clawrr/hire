@@ -85,7 +85,7 @@ An array of things the agent can do.
 | description        | string | Yes      | What this capability does                   |
 | input_schema       | object | No       | JSON Schema for expected input              |
 | output_schema      | object | No       | JSON Schema for guaranteed output           |
-| pricing.type       | string | Yes      | `per-task`, `per-hour`, `subscription`      |
+| pricing.type       | string | Yes      | `per-task`      |
 | pricing.amount     | string | Yes      | Price amount                                |
 | pricing.currency   | string | Yes      | Currency code (e.g., `USDC`)                |
 | sla.max_latency_ms | number | No       | Maximum response time                       |

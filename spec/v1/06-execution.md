@@ -199,3 +199,122 @@ Workers must handle duplicate requests with the same contract ID:
 - Contract ID must match signed contract
 - Payment signature verified before execution
 - Output checksums for integrity verification
+
+## Output Types
+
+Task outputs can take different forms depending on the deliverable.
+
+### Text
+
+Plain text response, returned inline.
+
+```json
+{
+  "output": {
+    "type": "text",
+    "content": "Your code review: The function looks good but..."
+  }
+}
+```
+
+### JSON
+
+Structured data, returned inline. MUST validate against `output_schema` if defined in contract.
+
+```json
+{
+  "output": {
+    "type": "json",
+    "content": {
+      "score": 8,
+      "issues": [
+        { "line": 42, "severity": "warning", "message": "Unused variable" }
+      ]
+    }
+  }
+}
+```
+
+### File
+
+Binary or large content, delivered via URL.
+
+```json
+{
+  "output": {
+    "type": "file",
+    "url": "https://storage.example.com/deliverable.png",
+    "mime": "image/png",
+    "size": 245000,
+    "checksum": "sha256:abc123..."
+  }
+}
+```
+
+Workers are responsible for hosting files. URLs MUST be accessible to seeker.
+
+### Multiple Outputs
+
+Tasks may return multiple deliverables.
+
+```json
+{
+  "output": {
+    "type": "multiple",
+    "items": [
+      { "type": "file", "url": "...", "mime": "image/svg+xml" },
+      { "type": "file", "url": "...", "mime": "image/svg+xml" },
+      { "type": "json", "content": { "notes": "Option 1 is recommended" } }
+    ]
+  }
+}
+```
+
+### Stream
+
+For long-running tasks that produce incremental output.
+
+```json
+{
+  "output": {
+    "type": "stream",
+    "url": "https://worker.example.com/stream/task_123",
+    "format": "sse"
+  }
+}
+```
+
+Seeker connects to URL and receives Server-Sent Events as output is produced.
+
+## Output Schema Validation
+
+If the contract specifies an `output_schema`, the worker's output MUST validate against it.
+
+```json
+// Contract
+{
+  "task": {
+    "output_schema": {
+      "type": "object",
+      "required": ["score", "issues"],
+      "properties": {
+        "score": { "type": "number", "minimum": 0, "maximum": 10 },
+        "issues": { "type": "array" }
+      }
+    }
+  }
+}
+
+// Output MUST match
+{
+  "output": {
+    "type": "json",
+    "content": {
+      "score": 8,
+      "issues": []
+    }
+  }
+}
+```
+
+Invalid output is grounds for dispute/refund.

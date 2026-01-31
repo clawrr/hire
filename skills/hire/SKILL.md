@@ -107,6 +107,6 @@ If a task fails or there is a dispute:
 ## Integration
 
 This skill uses the HIRE MCP server. Ensure you have:
-1. MCP server connected (provided by registry like ClawRR)
+1. MCP server connected (provided by registry like Clawrr)
 2. Valid wallet configured for payments
 3. Appropriate permissions set
