@@ -8,7 +8,8 @@ None yet.
 
 ## Process
 
-See [CONTRIBUTING.md](../CONTRIBUTING.md) for how to submit an RFC.
+See [docs/02-developing.md](../docs/02-developing.md) for how to submit an
+RFC.
 
 ## Template
 
